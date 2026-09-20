@@ -1,0 +1,627 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#11151a">
+  <title>Operation: Crystal Ball</title>
+
+  <style>
+    :root {
+      --paper: #eee6cf;
+      --paper-deep: #d8cba9;
+      --ink: #171717;
+      --red: #8f1d1d;
+      --red-dark: #681313;
+      --green: #263d2d;
+      --gold: #b89a5b;
+      --shadow: rgba(0,0,0,.34);
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body {
+      min-height: 100%;
+      margin: 0;
+    }
+
+    body {
+      font-family: Georgia, "Times New Roman", serif;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 20% 10%, rgba(255,255,255,.05), transparent 30%),
+        radial-gradient(circle at 80% 80%, rgba(255,255,255,.04), transparent 34%),
+        #11151a;
+      padding: 22px 14px 40px;
+    }
+
+    .wrap {
+      width: min(760px, 100%);
+      margin: 0 auto;
+    }
+
+    .folder-tab {
+      width: fit-content;
+      margin-left: 18px;
+      padding: 8px 20px 5px;
+      background: #b59d67;
+      color: #251f15;
+      border-radius: 6px 6px 0 0;
+      font: 700 13px/1.2 Arial, sans-serif;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      box-shadow: 0 8px 28px var(--shadow);
+    }
+
+    .document {
+      position: relative;
+      overflow: hidden;
+      background:
+        linear-gradient(rgba(115,82,39,.035), rgba(115,82,39,.035)),
+        var(--paper);
+      border: 1px solid #c7b88e;
+      border-radius: 3px;
+      box-shadow: 0 18px 55px var(--shadow);
+      padding: clamp(24px, 6vw, 54px);
+    }
+
+    .document::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      opacity: .28;
+      background-image:
+        repeating-linear-gradient(
+          0deg,
+          transparent 0,
+          transparent 4px,
+          rgba(75,55,35,.025) 5px
+        );
+    }
+
+    .top-line {
+      display: flex;
+      justify-content: space-between;
+      gap: 14px;
+      align-items: flex-start;
+      margin-bottom: 26px;
+      font-family: Arial, sans-serif;
+      text-transform: uppercase;
+      letter-spacing: .11em;
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .classification {
+      color: var(--red);
+      border: 2px solid var(--red);
+      padding: 6px 9px;
+      transform: rotate(-2deg);
+      font-size: 12px;
+    }
+
+    .mission-id {
+      text-align: right;
+      opacity: .72;
+      line-height: 1.55;
+    }
+
+    h1 {
+      margin: 10px 0 4px;
+      font-size: clamp(34px, 8vw, 62px);
+      line-height: .95;
+      text-transform: uppercase;
+      letter-spacing: -.035em;
+    }
+
+    .subtitle {
+      margin: 0 0 30px;
+      padding-bottom: 18px;
+      border-bottom: 2px solid rgba(23,23,23,.78);
+      font: 700 clamp(13px, 3vw, 16px)/1.4 Arial, sans-serif;
+      letter-spacing: .16em;
+      text-transform: uppercase;
+      color: var(--red);
+    }
+
+    p {
+      font-size: 18px;
+      line-height: 1.6;
+      margin: 0 0 18px;
+    }
+
+    .brief {
+      padding: 18px 20px;
+      margin: 24px 0 28px;
+      border-left: 5px solid var(--red);
+      background: rgba(143,29,29,.065);
+    }
+
+    .brief strong {
+      display: block;
+      margin-bottom: 8px;
+      font-family: Arial, sans-serif;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      font-size: 13px;
+      color: var(--red-dark);
+    }
+
+    .rules {
+      margin: 16px 0 0;
+      padding-left: 22px;
+      font-size: 17px;
+      line-height: 1.55;
+    }
+
+    .rules li { margin: 7px 0; }
+
+    form {
+      margin-top: 30px;
+      border-top: 1px solid rgba(23,23,23,.25);
+      padding-top: 26px;
+    }
+
+    label {
+      display: block;
+      margin: 0 0 8px;
+      font: 800 12px/1.2 Arial, sans-serif;
+      text-transform: uppercase;
+      letter-spacing: .12em;
+    }
+
+    input, textarea {
+      width: 100%;
+      border: 1px solid #7f755f;
+      border-radius: 2px;
+      background: rgba(255,255,255,.35);
+      color: var(--ink);
+      font: 18px/1.45 Georgia, "Times New Roman", serif;
+      padding: 13px 14px;
+      outline: none;
+      transition: .15s ease;
+    }
+
+    input:focus, textarea:focus {
+      border-color: var(--red);
+      box-shadow: 0 0 0 3px rgba(143,29,29,.1);
+      background: rgba(255,255,255,.55);
+    }
+
+    textarea {
+      min-height: 145px;
+      resize: vertical;
+    }
+
+    .field { margin-bottom: 20px; }
+
+    button {
+      width: 100%;
+      border: 0;
+      border-radius: 2px;
+      padding: 16px 18px;
+      cursor: pointer;
+      background: var(--red);
+      color: white;
+      font: 800 14px/1 Arial, sans-serif;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      box-shadow: 0 4px 0 var(--red-dark);
+      transition: transform .08s ease, filter .15s ease;
+    }
+
+    button:hover { filter: brightness(1.06); }
+    button:active {
+      transform: translateY(3px);
+      box-shadow: 0 1px 0 var(--red-dark);
+    }
+
+    button:disabled {
+      cursor: wait;
+      opacity: .65;
+    }
+
+    .fine-print {
+      margin: 14px 0 0;
+      text-align: center;
+      opacity: .64;
+      font: 12px/1.45 Arial, sans-serif;
+    }
+
+    .status {
+      min-height: 1.4em;
+      margin-top: 14px;
+      color: var(--red-dark);
+      font: 700 13px/1.4 Arial, sans-serif;
+      text-align: center;
+    }
+
+    .phase-two {
+      display: none;
+      animation: reveal .7s ease both;
+    }
+
+    .phase-two.show { display: block; }
+
+    @keyframes reveal {
+      from { opacity: 0; transform: translateY(12px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .stamp {
+      width: fit-content;
+      max-width: 100%;
+      margin: 8px auto 30px;
+      border: 4px solid var(--red);
+      color: var(--red);
+      padding: 10px 18px 7px;
+      font: 900 clamp(22px, 6vw, 38px)/1 Arial, sans-serif;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      transform: rotate(-4deg);
+      opacity: .9;
+    }
+
+    .twist {
+      margin: 28px 0;
+      padding: 23px;
+      background: #1c241f;
+      color: #f6efd9;
+      border: 1px solid #405547;
+      box-shadow: inset 0 0 0 4px rgba(255,255,255,.025);
+    }
+
+    .twist h2 {
+      margin: 0 0 14px;
+      color: #f5d995;
+      font: 900 clamp(25px, 7vw, 44px)/1 Arial, sans-serif;
+      text-transform: uppercase;
+      letter-spacing: .03em;
+    }
+
+    .twist p {
+      font-size: clamp(18px, 4vw, 23px);
+      line-height: 1.45;
+    }
+
+    .evidence {
+      margin-top: 26px;
+      border: 2px dashed var(--red);
+      padding: 20px;
+      text-align: center;
+      font: 900 16px/1.5 Arial, sans-serif;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      color: var(--red-dark);
+    }
+
+    .prediction-receipt {
+      margin: 22px 0;
+      padding: 18px;
+      background: rgba(255,255,255,.28);
+      border: 1px solid rgba(23,23,23,.22);
+    }
+
+    .prediction-receipt small {
+      display: block;
+      margin-bottom: 7px;
+      font: 800 11px/1 Arial, sans-serif;
+      text-transform: uppercase;
+      letter-spacing: .12em;
+      opacity: .65;
+    }
+
+    .prediction-receipt div {
+      font-size: 18px;
+      line-height: 1.5;
+    }
+
+    .setup-warning {
+      display: none;
+      margin-top: 14px;
+      padding: 12px;
+      border: 1px solid #8f1d1d;
+      background: rgba(143,29,29,.08);
+      color: #681313;
+      font: 700 13px/1.4 Arial, sans-serif;
+    }
+
+
+    .camera-card {
+      margin: 28px 0 10px;
+      padding: 22px;
+      text-align: center;
+      border: 1px solid rgba(23,23,23,.24);
+      background: rgba(255,255,255,.28);
+    }
+
+    .camera-card h3 {
+      margin: 0 0 10px;
+      font: 900 16px/1.2 Arial, sans-serif;
+      text-transform: uppercase;
+      letter-spacing: .1em;
+      color: var(--red-dark);
+    }
+
+    .camera-card p {
+      margin: 0 auto 16px;
+      max-width: 520px;
+      font-size: 16px;
+      line-height: 1.5;
+    }
+
+    .qr-link {
+      display: inline-block;
+      background: white;
+      padding: 12px;
+      border: 1px solid rgba(23,23,23,.18);
+      box-shadow: 0 6px 18px rgba(0,0,0,.12);
+    }
+
+    .qr-link img {
+      display: block;
+      width: min(280px, 72vw);
+      height: auto;
+    }
+
+    .pov-button {
+      display: block;
+      width: min(360px, 100%);
+      margin: 18px auto 0;
+      padding: 14px 18px;
+      border-radius: 2px;
+      background: var(--green);
+      color: #fff;
+      text-decoration: none;
+      font: 800 13px/1.2 Arial, sans-serif;
+      letter-spacing: .11em;
+      text-transform: uppercase;
+      box-shadow: 0 4px 0 #16251b;
+    }
+
+    .pov-button:active {
+      transform: translateY(3px);
+      box-shadow: 0 1px 0 #16251b;
+    }
+
+    @media (max-width: 520px) {
+      body { padding: 14px 10px 28px; }
+      .document { padding: 26px 20px 34px; }
+      .top-line { flex-direction: column; }
+      .mission-id { text-align: left; }
+      p { font-size: 17px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: .01ms !important;
+        transition-duration: .01ms !important;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <main class="wrap">
+    <div class="folder-tab">Classified Wedding Intelligence</div>
+
+    <section class="document" id="mission">
+      <div class="top-line">
+        <div class="classification">Top Secret</div>
+        <div class="mission-id">
+          Mission File: CB-01<br>
+          Clearance: Questionable
+        </div>
+      </div>
+
+      <div id="phaseOne">
+        <h1>Operation:<br>Crystal Ball</h1>
+        <div class="subtitle">Predictive Intelligence Division</div>
+
+        <p>
+          Every good intelligence agency needs people who can predict the future.
+        </p>
+
+        <p>
+          Unfortunately, we have you.
+        </p>
+
+        <div class="brief">
+          <strong>Your mission</strong>
+          <p style="margin:0">
+            Make one silly prediction about something that will happen before the wedding is over.
+          </p>
+
+          <ul class="rules">
+            <li>Possible, but unlikely.</li>
+            <li>Funny if it happened.</li>
+            <li>Specific enough that we can tell whether you were right.</li>
+          </ul>
+        </div>
+
+        <p>
+          Once you are satisfied with your prediction, enter your agent name and transmit it to headquarters.
+        </p>
+
+        <p><strong>Choose carefully. Predictions are final.</strong></p>
+
+        <form id="predictionForm">
+          <div class="field">
+            <label for="agentName">Agent Name</label>
+            <input
+              id="agentName"
+              name="agent_name"
+              type="text"
+              autocomplete="name"
+              maxlength="80"
+              required
+              placeholder="State your identity"
+            >
+          </div>
+
+          <div class="field">
+            <label for="prediction">Prediction</label>
+            <textarea
+              id="prediction"
+              name="prediction"
+              maxlength="500"
+              required
+              placeholder="I predict that..."
+            ></textarea>
+          </div>
+
+          <button id="submitButton" type="submit">Transmit Prediction</button>
+          <div class="status" id="status" aria-live="polite"></div>
+
+          <div class="setup-warning" id="setupWarning">
+            Site owner: add your Formspree endpoint in the script before publishing.
+          </div>
+
+          <p class="fine-print">
+            By transmitting this prediction, you accept all consequences arising from your own foresight.
+          </p>
+        </form>
+      </div>
+
+      <div class="phase-two" id="phaseTwo">
+        <div class="stamp">Prediction Received</div>
+
+        <h1>Phase Two</h1>
+        <div class="subtitle">Additional Orders Unlocked</div>
+
+        <p>Your prediction has been logged.</p>
+
+        <p>
+          There is, however, one small detail we neglected to mention.
+        </p>
+
+        <div class="prediction-receipt">
+          <small>Agent</small>
+          <div id="receiptName"></div>
+          <br>
+          <small>Official Prediction</small>
+          <div id="receiptPrediction"></div>
+        </div>
+
+        <div class="twist">
+          <h2>Now make it happen.</h2>
+
+          <p>
+            Your second objective is to ensure your prediction comes true before the wedding is over.
+          </p>
+
+          <p>
+            You may engineer events, encourage circumstances, recruit accomplices, or simply wait for fate to cooperate.
+          </p>
+
+          <p>
+            If reality proves stubborn, <strong>fake it convincingly.</strong>
+          </p>
+        </div>
+
+        <div class="evidence">
+          📸 Photographic evidence is required.
+        </div>
+
+        <div class="camera-card">
+          <h3>Send Your Evidence to POV</h3>
+          <p>
+            Once the prophecy has been fulfilled, staged, or suspiciously reconstructed,
+            add your photographic evidence to the wedding camera.
+          </p>
+
+          <a class="qr-link" href="https://pov.camera/qr/784254C6-1CD4-4E73-9957-0B9297BE7C3B" target="_blank" rel="noopener noreferrer" aria-label="Open POV Camera">
+            <img src="pov-qr.png" alt="QR code for the wedding POV camera">
+          </a>
+
+          <a class="pov-button" href="https://pov.camera/qr/784254C6-1CD4-4E73-9957-0B9297BE7C3B" target="_blank" rel="noopener noreferrer">
+            Open POV Camera
+          </a>
+        </div>
+
+        <p style="margin-top:28px">
+          Your mission is complete only when the prediction has been fulfilled, staged, or otherwise made to appear suspiciously true.
+        </p>
+
+        <p>
+          Good luck, Agent.
+        </p>
+
+        <p><strong>You wrote the prophecy. Now deal with it.</strong></p>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    /*
+      FORM SETUP
+      ----------
+      1. Create a Formspree form.
+      2. Replace the value below with the endpoint Formspree gives you.
+         Example: https://formspree.io/f/abcdefgh
+
+      The only submitted fields are:
+      - agent_name
+      - prediction
+    */
+    const FORM_ENDPOINT = "https://formspree.io/f/xzezdeeo";
+
+    const form = document.getElementById("predictionForm");
+    const phaseOne = document.getElementById("phaseOne");
+    const phaseTwo = document.getElementById("phaseTwo");
+    const status = document.getElementById("status");
+    const submitButton = document.getElementById("submitButton");
+    const setupWarning = document.getElementById("setupWarning");
+
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+
+      const agentName = document.getElementById("agentName").value.trim();
+      const prediction = document.getElementById("prediction").value.trim();
+
+      if (!agentName || !prediction) {
+        status.textContent = "Headquarters requires both your name and your prediction.";
+        return;
+      }
+
+      if (FORM_ENDPOINT.includes("YOUR_FORM_ID")) {
+        setupWarning.style.display = "block";
+        status.textContent = "Transmission system is not configured yet.";
+        return;
+      }
+
+      submitButton.disabled = true;
+      submitButton.textContent = "Transmitting...";
+      status.textContent = "";
+
+      try {
+        const response = await fetch(FORM_ENDPOINT, {
+          method: "POST",
+          headers: {
+            "Accept": "application/json"
+          },
+          body: new FormData(form)
+        });
+
+        if (!response.ok) {
+          throw new Error("Submission failed");
+        }
+
+        document.getElementById("receiptName").textContent = agentName;
+        document.getElementById("receiptPrediction").textContent = prediction;
+
+        phaseOne.style.display = "none";
+        phaseTwo.classList.add("show");
+        window.scrollTo({ top: 0, behavior: "smooth" });
+
+      } catch (error) {
+        status.textContent =
+          "Transmission failed. Check your signal and try again.";
+        submitButton.disabled = false;
+        submitButton.textContent = "Transmit Prediction";
+      }
+    });
+  </script>
+</body>
+</html>
